@@ -1,0 +1,4 @@
+.idea/
+challenge/**/target/**
+*/target/*
+.DS_Store
