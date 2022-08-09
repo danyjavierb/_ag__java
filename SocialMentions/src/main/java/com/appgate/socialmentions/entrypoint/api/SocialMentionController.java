@@ -2,14 +2,19 @@ package com.appgate.socialmentions.entrypoint.api;
 
 import com.appgate.socialmentions.DBService;
 import com.appgate.socialmentions.FacebookAnalyzer;
-import com.appgate.socialmentions.SocialMention;
+import com.appgate.socialmentions.entrypoint.api.payload.SocialMention;
 import com.appgate.socialmentions.TweeterAnalyzer;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/Social-Mentions")
+import javax.validation.Valid;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("v1/social-mentions")
+//@RequestMapping("/Social-Mentions") dont break current contracts
 class SocialMentionController {
 
     public static final String ANALYZED_TWEETS_TABLE = "analyzed_tweets";
@@ -17,8 +22,10 @@ class SocialMentionController {
 
     private DBService dbService = new DBService("localhost", 5432); // database host and port
 
-    @PostMapping("/AnalyzeSocialMention")
-    public String analyze(SocialMention socialMention) {
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = "/analyze",produces = MediaType.APPLICATION_JSON_VALUE)
+   // @PostMapping("/AnalyzeSocialMention") dont break current contracts
+    public String analyze(@Valid @RequestBody SocialMention socialMentionPayload) {
 
         double facebookCommentsScore = 0;
         boolean isFacebook = false;
@@ -27,32 +34,32 @@ class SocialMentionController {
         Double facebookScore = 0d; // General facebook score based on comments and message
         Double tweeterScore = 0d; // General facebook score based on comments and message
 
-        if (socialMention.getFacebookAccount() != null) {
+        if (socialMentionPayload.getFacebookAccount() != null) {
             isFacebook = true;
-        } else if (socialMention.getTweeterAccount() != null) {
+        } else if (socialMentionPayload.getTweeterAccount() != null) {
             isTweeter = true;
         }
 
         if (isFacebook || isTweeter) {
             if (isFacebook) {
-                socialMention.setMessage("facebookMessage: " + socialMention.getMessage());
-                String comments = socialMention
+                socialMentionPayload.setMessage("facebookMessage: " + socialMentionPayload.getMessage());
+                String comments = socialMentionPayload
                         .getFacebookComments()
                         .stream()
                         .reduce("", (h, c) -> h + " " + c);
-                socialMention.setMessage(socialMention.getMessage() + " || comments: " +
+                socialMentionPayload.setMessage(socialMentionPayload.getMessage() + " || comments: " +
                         comments);
 
             } else {
-                socialMention.setMessage("tweeterMessage: " + socialMention.getMessage());
+                socialMentionPayload.setMessage("tweeterMessage: " + socialMention.getMessage());
             }
 
             // Analyze and score facebook comments if present
-            if (socialMention.getMessage().contains("comments:")) {
+            if (socialMentionPayload.getMessage().contains("comments:")) {
                 facebookCommentsScore = FacebookAnalyzer.calculateFacebookCommentsScore(
-                        socialMention
+                        socialMentionPayload
                                 .getMessage()
-                                .substring(socialMention.getMessage().indexOf("comments:"))
+                                .substring(socialMentionPayload.getMessage().indexOf("comments:"))
                 );
             }
             if (facebookCommentsScore < 50d){
@@ -62,30 +69,30 @@ class SocialMentionController {
             // Analyze facebook post (if facebook is already low then skip this analysis)
             if (isFacebook && facebookScore > -100) {
                 facebookScore = FacebookAnalyzer.analyzePost(
-                        socialMention.getMessage(),
-                        socialMention.getFacebookAccount()
+                        socialMentionPayload.getMessage(),
+                        socialMentionPayload.getFacebookAccount()
                 );
                 dbService.insertFBPost(
                         ANALYZED_FB_TABLE,
                         facebookScore,
-                        socialMention.getMessage(),
-                        socialMention.getFacebookAccount()
+                        socialMentionPayload.getMessage(),
+                        socialMentionPayload.getFacebookAccount()
                 );
             }
 
             // Analyze tweet
             if (isTweeter) {
                 tweeterScore = TweeterAnalyzer.analyzeTweet(
-                        socialMention.getMessage(),
-                        socialMention.getTweeterUrl(),
-                        socialMention.getTweeterAccount()
+                        socialMentionPayload.getMessage(),
+                        socialMentionPayload.getTweeterUrl(),
+                        socialMentionPayload.getTweeterAccount()
                 );
                 dbService.insertTweet(
                         ANALYZED_TWEETS_TABLE,
                         tweeterScore,
-                        socialMention.getMessage(),
-                        socialMention.getTweeterUrl(),
-                        socialMention.getTweeterAccount()
+                        socialMentionPayload.getMessage(),
+                        socialMentionPayload.getTweeterUrl(),
+                        socialMentionPayload.getTweeterAccount()
                 );
             }
 
@@ -112,6 +119,6 @@ class SocialMentionController {
             return "Error, Tweeter or Facebook account must be present";
         }
 
-        return socialMention.getMessage();
+        return socialMentionPayload.getMessage();
     }
 }
