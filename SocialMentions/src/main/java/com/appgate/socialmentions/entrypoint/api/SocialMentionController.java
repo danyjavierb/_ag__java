@@ -31,6 +31,7 @@ class SocialMentionController {
         boolean isFacebook = false;
         boolean isTweeter = false;
 
+
         double facebookScore = 0d; // General facebook score based on comments and message
         double tweeterScore = 0d; // General facebook score based on comments and message
 
@@ -39,6 +40,9 @@ class SocialMentionController {
         } else if (socialMentionPayload.getTweeterAccount() != null) {
             isTweeter = true;
         }
+
+
+        
 
         if (isFacebook || isTweeter) {
             if (isFacebook) {
