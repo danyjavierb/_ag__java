@@ -2,7 +2,7 @@ package com.appgate.socialmentions;
 
 import java.util.List;
 
-class SocialMention {
+public class SocialMention {
     private String message;
     private String facebookAccount;
     private String tweeterAccount;
