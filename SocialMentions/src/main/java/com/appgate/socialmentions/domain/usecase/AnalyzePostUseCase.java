@@ -1,16 +1,17 @@
 package com.appgate.socialmentions.domain.usecase;
 
 import com.appgate.socialmentions.entrypoint.api.payload.SocialMention;
+import com.appgate.socialmentions.persistence.services.PostServiceImpl;
 import com.appgate.socialmentions.persistence.services.TweetServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
-@Component
+
 @AllArgsConstructor
 public class AnalyzePostUseCase implements AnalyzeMention {
 
-    private TweetServiceImpl tweetService;
+    private PostServiceImpl postService;
 
     @Override
     public String analyze(SocialMention socialMentionPayload) {
@@ -42,7 +43,7 @@ public class AnalyzePostUseCase implements AnalyzeMention {
                     socialMentionPayload.getFacebookAccount()
             );
 
-            this.tweetService.createMention(facebookScore, socialMentionPayload);
+            this.postService.createMention(facebookScore, socialMentionPayload);
 
         }
         if (facebookScore == -100d) {

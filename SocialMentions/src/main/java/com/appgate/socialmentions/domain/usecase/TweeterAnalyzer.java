@@ -1,5 +1,7 @@
 package com.appgate.socialmentions.domain.usecase;
 
+import java.util.Random;
+
 public class TweeterAnalyzer {
 
     public static Double analyzeTweet(
@@ -8,6 +10,6 @@ public class TweeterAnalyzer {
             String tweeterAccount
     ) {
         //Logic to analyze Tweeter post
-        return 1.0;
+        return (double) new Random().ints(1, 100).findFirst().getAsInt();
     }
 }

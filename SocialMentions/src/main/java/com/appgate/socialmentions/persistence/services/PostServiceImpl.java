@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.Entity;
 
 
-@Service
+
 @AllArgsConstructor
 public class PostServiceImpl implements CreateMentionRecord<PostEntity> // implements  TweetService{
 {

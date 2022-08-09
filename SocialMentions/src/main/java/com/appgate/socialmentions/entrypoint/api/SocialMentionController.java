@@ -17,8 +17,6 @@ import javax.validation.Valid;
 @RequestMapping("v1/social-mentions")
 //@RequestMapping("/Social-Mentions") dont break current contracts
 class SocialMentionController {
-
-
     private final  AnalyzePostUseCase analyzePostUseCase;
 
     private final  AnalyzeTweetUseCase analyzeTweetUseCase;

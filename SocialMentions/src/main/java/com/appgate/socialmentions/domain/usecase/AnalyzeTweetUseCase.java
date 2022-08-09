@@ -2,14 +2,15 @@ package com.appgate.socialmentions.domain.usecase;
 
 import com.appgate.socialmentions.entrypoint.api.payload.SocialMention;
 import com.appgate.socialmentions.persistence.services.PostServiceImpl;
+import com.appgate.socialmentions.persistence.services.TweetServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
+
 @AllArgsConstructor
 public class AnalyzeTweetUseCase implements AnalyzeMention {
 
-    private PostServiceImpl postService;
+    private TweetServiceImpl tweetService;
 
     @Override
     public String analyze(SocialMention socialMentionPayload) {
@@ -21,7 +22,7 @@ public class AnalyzeTweetUseCase implements AnalyzeMention {
                 socialMentionPayload.getTweeterUrl(),
                 socialMentionPayload.getTweeterAccount());
 
-        this.postService.createMention(tweeterScore,socialMentionPayload);
+        this.tweetService.createMention(tweeterScore,socialMentionPayload);
 
         if (tweeterScore >= -1 && tweeterScore <= -0.5d) {
             return "HIGH_RISK";
