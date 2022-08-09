@@ -1,6 +1,10 @@
 package org.example;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -44,17 +48,29 @@ public class CodingChallenge {
     public interface FourParameterFunction<T, U, V, W, R> {
         public R apply(T t, U u, V v, W w);
     }
+    @FunctionalInterface
+    public interface TwoParameterFunction<T, U, R> {
+        public R apply(T t, U u);
+    }
 
     static FourParameterFunction<String,String,Integer,Integer,Integer> aux = (String a, String b, Integer m , Integer n ) -> {
-        if (n == 0)
-            return 1;
-        if (m == 0)
-            return 0;
-        if (a.charAt(m - 1) == b.charAt(n - 1))
-            return CodingChallenge.aux.apply(a, b, m - 1, n - 1) +
-                    CodingChallenge.aux.apply(a, b, m - 1, n);
-        else
-            return CodingChallenge.aux.apply(a, b, m - 1, n);
+
+       int[] subs = new int[n];
+       Arrays.fill(subs,0);
+        for (int i = 0; i < m; i++)
+        {
+
+            for (int j = n - 1; j >= 0; j--)
+            {
+                if (a.charAt(i) == b.charAt(j))
+                {
+                   if (j == 0)   subs[j] ++;
+                   else  subs[j] += subs[j - 1];
+                }
+            }
+        }
+
+        return Arrays.stream(subs).max().getAsInt();
     };
 
 
