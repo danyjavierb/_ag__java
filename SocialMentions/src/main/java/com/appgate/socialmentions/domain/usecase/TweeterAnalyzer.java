@@ -1,4 +1,4 @@
-package com.appgate.socialmentions;
+package com.appgate.socialmentions.domain.usecase;
 
 public class TweeterAnalyzer {
 

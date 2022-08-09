@@ -7,3 +7,8 @@ Adding lombok payload SocialMention decrease4 cognitive load, reduce boilerplate
 
 
 adding jpa entities and repositories definition
+
+crear servicios y repositiorios con abstraccion comun sobre generico para cada entidad
+
+crear inicios de use cases para ser estrategias y permitir escalar a
+otros tipos de mencion de otras redes
