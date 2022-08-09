@@ -8,6 +8,6 @@ public class TweeterAnalyzer {
             String tweeterAccount
     ) {
         //Logic to analyze Tweeter post
-        return null;
+        return 1.0;
     }
 }

@@ -31,8 +31,8 @@ class SocialMentionController {
         boolean isFacebook = false;
         boolean isTweeter = false;
 
-        Double facebookScore = 0d; // General facebook score based on comments and message
-        Double tweeterScore = 0d; // General facebook score based on comments and message
+        double facebookScore = 0d; // General facebook score based on comments and message
+        double tweeterScore = 0d; // General facebook score based on comments and message
 
         if (socialMentionPayload.getFacebookAccount() != null) {
             isFacebook = true;
@@ -51,7 +51,7 @@ class SocialMentionController {
                         comments);
 
             } else {
-                socialMentionPayload.setMessage("tweeterMessage: " + socialMention.getMessage());
+                socialMentionPayload.setMessage("tweeterMessage: " + socialMentionPayload.getMessage());
             }
 
             // Analyze and score facebook comments if present
